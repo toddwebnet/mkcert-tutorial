@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+
+  web:
+    build:
+        context: ${DOCKER_PATH}/nginx
+    volumes:
+      - ${APP_PATH}/_devops/nginx/web.conf:/etc/nginx/sites-available/default.conf
+      - ${APP_PATH}/data/nginx/ssl/:/etc/nginx/ssl
+      - ${APP_PATH}/web:/var/www
+    ports:
+      - 8100:8100
+    networks:
+      - network
+
+  proxy:
+    build:
+        context: ${DOCKER_PATH}/nginx      
+    volumes:
+      - ${APP_PATH}/_devops/nginx/web.proxy.conf:/etc/nginx/sites-available/default.conf
+      - ${APP_PATH}/data/nginx/ssl/:/etc/nginx/ssl
+      - ${APP_PATH}/web:/var/www
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - network
+
+
+##########################################################
+##########################################################
+
+networks:
+  network:
+    driver: ${NETWORKS_DRIVER}
